@@ -229,6 +229,15 @@ function navigateTo(page) {
         }
     });
 
+    // Update active mobile bottom nav button
+    document.querySelectorAll('.mobile-nav-btn').forEach(btn => {
+        if (btn.getAttribute('data-page') === page) {
+            btn.classList.add('active');
+        } else {
+            btn.classList.remove('active');
+        }
+    });
+
     const titles = {
         dashboard: 'Dashboard',
         transaction: 'Catat Transaksi',
@@ -310,6 +319,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         item.addEventListener('click', (e) => {
             e.preventDefault();
             const page = item.getAttribute('data-page');
+            navigateTo(page);
+        });
+    });
+
+    // Setup mobile bottom nav buttons
+    document.querySelectorAll('.mobile-nav-btn[data-page]').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const page = btn.getAttribute('data-page');
             navigateTo(page);
         });
     });

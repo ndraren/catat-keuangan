@@ -343,6 +343,68 @@
       0%, 100% { transform: translateY(0); }
       50% { transform: translateY(-4px); }
     }
+
+    /* Mobile Responsive Optimizations */
+    @media (max-width: 480px) {
+      body {
+        padding: 16px 12px;
+        align-items: flex-start;
+      }
+      .auth-container {
+        margin: 10px auto 30px;
+        max-width: 100%;
+      }
+      .auth-card {
+        padding: 24px 18px 20px;
+        border-radius: 16px;
+      }
+      .brand {
+        margin-bottom: 20px;
+      }
+      .brand-icon {
+        width: 46px;
+        height: 46px;
+        font-size: 1.35rem;
+        margin-bottom: 8px;
+        border-radius: 12px;
+      }
+      .brand h1 {
+        font-size: 1.35rem;
+      }
+      .brand p {
+        font-size: 0.8rem;
+      }
+      .auth-tabs {
+        margin-bottom: 20px;
+        padding: 4px;
+      }
+      .auth-tab {
+        padding: 9px 12px;
+        font-size: 0.85rem;
+      }
+      .form-group {
+        margin-bottom: 15px;
+      }
+      .form-label {
+        font-size: 0.82rem;
+        margin-bottom: 6px;
+      }
+      .form-control {
+        font-size: 16px !important;
+        padding: 11px 14px;
+        border-radius: 10px;
+        height: 46px;
+      }
+      .input-wrapper .input-icon {
+        font-size: 0.95rem;
+      }
+      .btn-submit {
+        height: 48px;
+        font-size: 0.95rem;
+        border-radius: 10px;
+        margin-top: 8px;
+      }
+    }
   </style>
 </head>
 <body>
