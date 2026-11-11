@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CatatKeuangan — Kelola Keuangan Pribadi</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💰</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    /* ---------- CSS Variables (High-End Deep Navy + Light Blue Accents) ---------- */
+    :root {
+      --navy-950: #060b14;
+      --navy-900: #0a1120;
+      --navy-800: #0f1a30;
+      --navy-700: #172746;
+      --accent: #0284c7;
+      --accent-light: #0ea5e9;
+      --accent-sky: #38bdf8;
+      --accent-glow: rgba(14, 165, 233, 0.3);
+      --white: #ffffff;
+      --gray-50: #f8fafc;
+      --gray-100: #f1f5f9;
+      --gray-200: #e2e8f0;
+      --gray-400: #94a3b8;
+      --gray-500: #64748b;
+      --gray-700: #334155;
+      --red: #f43f5e;
+      --green: #10b981;
+      --shadow-sm: 0 2px 4px rgba(10, 17, 32, 0.04);
+      --shadow: 0 10px 30px -5px rgba(10, 17, 32, 0.08);
+      --shadow-lg: 0 25px 50px -12px rgba(10, 17, 32, 0.25);
+      --radius: 18px;
+      --radius-sm: 10px;
+      --radius-pill: 9999px;
+      --transition: 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* ---------- Reset ---------- */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { font-size: 16px; -webkit-font-smoothing: antialiased; }
+
+    body {
+      font-family: 'Work Sans', system-ui, -apple-system, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at 15% 15%, #0d1b33 0%, #060b14 60%, #03060b 100%);
+      background-attachment: fixed;
+      padding: 1.5rem;
+      position: relative;
+      overflow-x: hidden;
+      color: var(--gray-700);
+    }
+
+    /* Subtle ambient mesh glow */
+    body::before {
+      content: '';
+      position: fixed;
+      top: -20%;
+      left: 10%;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(14, 165, 233, 0.15) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+      filter: blur(40px);
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      bottom: -10%;
+      right: 15%;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(2, 132, 199, 0.12) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+      filter: blur(40px);
+    }
+
+    /* ---------- Auth Container & Card ---------- */
+    .auth-container {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 460px;
+      animation: cardEntrance 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .auth-card {
+      background: rgba(255, 255, 255, 0.98);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: var(--radius);
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1);
+      overflow: hidden;
+      padding: 36px 36px 32px;
+    }
+
+    /* ---------- Brand Header ---------- */
+    .brand {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .brand-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 54px;
+      height: 54px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #0284c7 0%, #38bdf8 100%);
+      color: #ffffff;
+      font-size: 1.6rem;
+      margin-bottom: 12px;
+      box-shadow: 0 8px 24px rgba(14, 165, 233, 0.45);
+      animation: float 4s ease-in-out infinite;
+    }
+
+    .brand h1 {
+      font-size: 1.55rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--navy-900);
+      margin-bottom: 4px;
+    }
+
+    .brand p {
+      font-size: 0.88rem;
+      color: var(--gray-500);
+      font-weight: 500;
+    }
+
+    /* ---------- Modern Pill Tabs ---------- */
+    .tabs-wrapper {
+      position: relative;
+      background: var(--gray-100);
+      border-radius: var(--radius-sm);
+      padding: 4px;
+      display: flex;
+      margin-bottom: 24px;
+      border: 1px solid var(--gray-200);
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 10px 0;
+      border: none;
+      background: transparent;
+      font-family: inherit;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--gray-500);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: var(--transition);
+      z-index: 1;
+      text-align: center;
+    }
+
+    .tab-btn.active {
+      color: var(--navy-950);
+      background: #ffffff;
+      box-shadow: 0 2px 8px rgba(10, 17, 32, 0.08);
+    }
+
+    /* ---------- Forms & Inputs ---------- */
+    .form-panel {
+      display: none;
+    }
+
+    .form-panel.active {
+      display: block;
+      animation: fadeIn 0.25s ease;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--navy-900);
+      margin-bottom: 6px;
+    }
+
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .input-icon {
+      position: absolute;
+      left: 14px;
+      color: var(--gray-400);
+      font-size: 0.95rem;
+      pointer-events: none;
+      transition: var(--transition);
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 11px 40px 11px 42px;
+      font-family: inherit;
+      font-size: 0.92rem;
+      color: var(--navy-950);
+      background: #ffffff;
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-sm);
+      outline: none;
+      transition: var(--transition);
+    }
+
+    .form-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+
+    .form-input:focus ~ .input-icon {
+      color: var(--accent);
+    }
+
+    .toggle-pwd {
+      position: absolute;
+      right: 12px;
+      background: none;
+      border: none;
+      color: var(--gray-400);
+      cursor: pointer;
+      padding: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition);
+    }
+
+    .toggle-pwd:hover {
+      color: var(--navy-900);
+    }
+
+    .field-error {
+      font-size: 0.78rem;
+      color: var(--red);
+      margin-top: 4px;
+      display: none;
+    }
+
+    /* ---------- Submit Button ---------- */
+    .btn-submit {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      border: none;
+      border-radius: var(--radius-sm);
+      background: linear-gradient(135deg, #0284c7 0%, #0ea5e9 100%);
+      color: #ffffff;
+      font-family: inherit;
+      font-size: 0.95rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      cursor: pointer;
+      transition: var(--transition);
+      box-shadow: 0 6px 18px rgba(14, 165, 233, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-submit:hover {
+      background: linear-gradient(135deg, #0369a1 0%, #0284c7 100%);
+      box-shadow: 0 8px 24px rgba(14, 165, 233, 0.5);
+      transform: translateY(-1px);
+    }
+
+    .btn-submit:active {
+      transform: translateY(0);
+    }
+
+    .btn-submit:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* ---------- Toast Notifications ---------- */
+    .toast-box {
+      position: fixed;
+      top: 24px;
+      right: 24px;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .toast-msg {
+      background: #ffffff;
+      border-radius: var(--radius-sm);
+      padding: 14px 18px;
+      box-shadow: var(--shadow-lg);
+      border: 1px solid var(--gray-200);
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--navy-900);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      animation: slideIn 0.3s ease;
+      min-width: 280px;
+    }
+
+    .toast-msg.success { border-left: 4px solid var(--green); }
+    .toast-msg.error { border-left: 4px solid var(--red); }
+
+    /* ---------- Animations ---------- */
+    @keyframes cardEntrance {
+      from { opacity: 0; transform: translateY(20px) scale(0.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(30px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-4px); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="toast-box" id="toastBox"></div>
+
+  <div class="auth-container">
+    <div class="auth-card">
+      <div class="brand">
+        <div class="brand-icon">
+          <i class="fas fa-wallet"></i>
+        </div>
+        <h1>CatatKeuangan</h1>
+        <p>Platform Pengelolaan Keuangan Pribadi Modern</p>
+      </div>
+
+      <div class="tabs-wrapper">
+        <button class="tab-btn active" id="tabLogin" onclick="switchAuthTab('login')">Masuk</button>
+        <button class="tab-btn" id="tabRegister" onclick="switchAuthTab('register')">Daftar</button>
+      </div>
+
+      <!-- Login Form -->
+      <div class="form-panel active" id="panelLogin">
+        <form id="loginForm" onsubmit="handleLogin(event)">
+          <div class="form-group">
+            <label class="form-label">Email</label>
+            <div class="input-wrapper">
+              <i class="fas fa-envelope input-icon"></i>
+              <input type="email" class="form-input" id="loginEmail" placeholder="nama@email.com" required autocomplete="email">
+            </div>
+            <div class="field-error" id="loginEmailErr"></div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Kata Sandi</label>
+            <div class="input-wrapper">
+              <i class="fas fa-lock input-icon"></i>
+              <input type="password" class="form-input" id="loginPwd" placeholder="••••••••" required minlength="6" autocomplete="current-password">
+              <button type="button" class="toggle-pwd" onclick="togglePassword('loginPwd', this)">
+                <i class="fas fa-eye"></i>
+              </button>
+            </div>
+            <div class="field-error" id="loginPwdErr"></div>
+          </div>
+
+          <button type="submit" class="btn-submit" id="loginBtn">
+            <span>Masuk ke Akun</span>
+            <i class="fas fa-arrow-right"></i>
+          </button>
+        </form>
+      </div>
+
+      <!-- Register Form -->
+      <div class="form-panel" id="panelRegister">
+        <form id="registerForm" onsubmit="handleRegister(event)">
+          <div class="form-group">
+            <label class="form-label">Nama Lengkap</label>
+            <div class="input-wrapper">
+              <i class="fas fa-user input-icon"></i>
+              <input type="text" class="form-input" id="regName" placeholder="Contoh: Budi Santoso" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Username</label>
+            <div class="input-wrapper">
+              <i class="fas fa-at input-icon"></i>
+              <input type="text" class="form-input" id="regUsername" placeholder="budisantoso" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Email</label>
+            <div class="input-wrapper">
+              <i class="fas fa-envelope input-icon"></i>
+              <input type="email" class="form-input" id="regEmail" placeholder="budi@email.com" required autocomplete="email">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Kata Sandi</label>
+            <div class="input-wrapper">
+              <i class="fas fa-lock input-icon"></i>
+              <input type="password" class="form-input" id="regPwd" placeholder="Min. 6 karakter" required minlength="6" autocomplete="new-password">
+              <button type="button" class="toggle-pwd" onclick="togglePassword('regPwd', this)">
+                <i class="fas fa-eye"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Konfirmasi Kata Sandi</label>
+            <div class="input-wrapper">
+              <i class="fas fa-shield-alt input-icon"></i>
+              <input type="password" class="form-input" id="regPwdConfirm" placeholder="Ulangi kata sandi" required minlength="6" autocomplete="new-password">
+              <button type="button" class="toggle-pwd" onclick="togglePassword('regPwdConfirm', this)">
+                <i class="fas fa-eye"></i>
+              </button>
+            </div>
+            <div class="field-error" id="regPwdConfirmErr"></div>
+          </div>
+
+          <button type="submit" class="btn-submit" id="regBtn">
+            <span>Daftar Akun Baru</span>
+            <i class="fas fa-user-plus"></i>
+          </button>
+        </form>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    function switchAuthTab(tab) {
+      const btnLog = document.getElementById('tabLogin');
+      const btnReg = document.getElementById('tabRegister');
+      const pLog = document.getElementById('panelLogin');
+      const pReg = document.getElementById('panelRegister');
+
+      if (tab === 'login') {
+        btnLog.classList.add('active');
+        btnReg.classList.remove('active');
+        pLog.classList.add('active');
+        pReg.classList.remove('active');
+      } else {
+        btnReg.classList.add('active');
+        btnLog.classList.remove('active');
+        pReg.classList.add('active');
+        pLog.classList.remove('active');
+      }
+    }
+
+    function togglePassword(inputId, btn) {
+      const input = document.getElementById(inputId);
+      const icon = btn.querySelector('i');
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.replace('fa-eye', 'fa-eye-slash');
+      } else {
+        input.type = 'password';
+        icon.classList.replace('fa-eye-slash', 'fa-eye');
+      }
+    }
+
+    function showToast(msg, type = 'success') {
+      const box = document.getElementById('toastBox');
+      const el = document.createElement('div');
+      el.className = `toast-msg ${type}`;
+      el.innerHTML = `
+        <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}" style="color:var(--${type === 'success' ? 'green' : 'red'});"></i>
+        <span>${msg}</span>
+      `;
+      box.appendChild(el);
+      setTimeout(() => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(-10px)';
+        el.style.transition = 'all 0.3s ease';
+        setTimeout(() => el.remove(), 300);
+      }, 3500);
+    }
+
+    async function handleLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPwd').value;
+      const btn = document.getElementById('loginBtn');
+
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>Memproses...</span>';
+
+      try {
+        const res = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ email, password })
+        });
+        const data = await res.json().catch(() => ({}));
+
+        if (!res.ok) {
+          throw new Error(data.error || 'Email atau password salah');
+        }
+
+        showToast('Login berhasil! Mengalihkan...', 'success');
+        setTimeout(() => {
+          window.location.href = '/';
+        }, 600);
+      } catch (err) {
+        showToast(err.message, 'error');
+        btn.disabled = false;
+        btn.innerHTML = '<span>Masuk ke Akun</span><i class="fas fa-arrow-right"></i>';
+      }
+    }
+
+    async function handleRegister(e) {
+      e.preventDefault();
+      const display_name = document.getElementById('regName').value.trim();
+      const username = document.getElementById('regUsername').value.trim();
+      const email = document.getElementById('regEmail').value.trim();
+      const password = document.getElementById('regPwd').value;
+      const confirmPwd = document.getElementById('regPwdConfirm').value;
+      const btn = document.getElementById('regBtn');
+
+      if (password !== confirmPwd) {
+        showToast('Konfirmasi kata sandi tidak cocok!', 'error');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>Mendaftarkan...</span>';
+
+      try {
+        const res = await fetch('/api/auth/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ username, email, password, display_name })
+        });
+        const data = await res.json().catch(() => ({}));
+
+        if (!res.ok) {
+          throw new Error(data.error || 'Pendaftaran gagal');
+        }
+
+        showToast('Pendaftaran akun berhasil! Silakan masuk.', 'success');
+        document.getElementById('loginEmail').value = email;
+        document.getElementById('loginPwd').value = '';
+        switchAuthTab('login');
+      } catch (err) {
+        showToast(err.message, 'error');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<span>Daftar Akun Baru</span><i class="fas fa-user-plus"></i>';
+      }
+    }
+  </script>
+</body>
+</html>

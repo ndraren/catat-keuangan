@@ -1,0 +1,19 @@
+# Environment & Executables
+cloudflared.exe
+__pycache__/
+*.py[cod]
+*$py.class
+.env
+.venv/
+env/
+venv/
+
+# IDE & Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Database & local uploads
+uploads/*
+!uploads/.gitkeep
