@@ -2184,3 +2184,26 @@ function promptDeleteCategory(id, name) {
     };
     openModal('confirmDeleteModal');
 }
+
+function confirmResetAllData() {
+    const modalMsg = document.getElementById('deleteMessage');
+    if (modalMsg) {
+        modalMsg.innerHTML = '<span style="color:#ef4444; font-weight:700;">PERINGATAN:</span> Apakah Anda yakin ingin menghapus SEMUA catatan pemasukan dan pengeluaran? Saldo Anda akan kembali bersih menjadi Rp 0.';
+    }
+    const btn = document.getElementById('confirmDeleteBtn');
+    if (btn) {
+        btn.textContent = 'Ya, Reset Semua Data';
+        btn.onclick = async () => {
+            try {
+                const res = await api('/api/settings/reset-data', { method: 'POST' });
+                showToast(res.message || 'Semua transaksi berhasil direset ke Rp 0', 'success');
+                closeModal('confirmDeleteModal');
+                await loadDashboard();
+                if (typeof loadTransactions === 'function') await loadTransactions();
+            } catch (e) {
+                showToast('Gagal mereset data: ' + e.message, 'error');
+            }
+        };
+    }
+    openModal('confirmDeleteModal');
+}

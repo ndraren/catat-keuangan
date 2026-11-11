@@ -1351,6 +1351,22 @@ def settings_update():
         return jsonify({"error": str(e)}), 500
 
 
+@app.route("/api/settings/reset-data", methods=["POST"])
+@login_required
+def settings_reset_data():
+    try:
+        db = get_db()
+        # Hapus seluruh transaksi milik user ini
+        db.execute("DELETE FROM transactions WHERE user_id=?", (g.user_id,))
+        # Hapus anggaran dan tabungan
+        db.execute("DELETE FROM budgets WHERE user_id=?", (g.user_id,))
+        db.execute("DELETE FROM savings_goals WHERE user_id=?", (g.user_id,))
+        db.commit()
+        return jsonify({"message": "Semua data transaksi, anggaran, dan tabungan berhasil direset ke 0."})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
 @app.route("/api/settings/profile-picture", methods=["POST"])
 @login_required
 def settings_profile_picture():
